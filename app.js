@@ -43,6 +43,7 @@ function filteredMovies(){
   });
   if(state.sort==="title")arr.sort((a,b)=>a.title.localeCompare(b.title));
   else if(state.sort==="year")arr.sort((a,b)=>(Number(b.year)||0)-(Number(a.year)||0)||a.position-b.position);
+  else if(state.sort==="oldest")arr.sort((a,b)=>{const ay=Number(a.year)||99999, by=Number(b.year)||99999;return ay-by||a.position-b.position;});
   else if(state.sort==="rating")arr.sort((a,b)=>(Number(b.rating)||0)-(Number(a.rating)||0)||a.position-b.position);
   else if(state.sort==="unwatched")arr.sort((a,b)=>Number(isWatched(a))-Number(isWatched(b))||a.position-b.position);
   else arr.sort((a,b)=>a.position-b.position);
@@ -52,7 +53,8 @@ function card(m){
   const watched=isWatched(m);
   const first=(m.title||"?").split(/[\s:—-]+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase();
   return `<article class="movie-card ${watched?"is-watched":""}" data-id="${esc(m.id)}">
-    <button class="poster poster-${Math.abs([...m.id].reduce((a,c)=>a+c.charCodeAt(0),0))%6}" data-action="detail" data-id="${esc(m.id)}" aria-label="Details for ${esc(m.title)}">
+    <button class="poster poster-${Math.abs([...m.id].reduce((a,c)=>a+c.charCodeAt(0),0))%6} ${m.posterPath?"has-real-poster":""}" data-action="detail" data-id="${esc(m.id)}" aria-label="Details for ${esc(m.title)}">
+      ${m.posterPath?`<img class="poster-image" src="https://image.tmdb.org/t/p/w500${esc(m.posterPath)}" alt="${esc(m.title)} official movie poster" loading="lazy">`:""}
       <span class="poster-top">CINEMA CLUB <span>#${String(m.position).padStart(3,"0")}</span></span>
       <span class="poster-mark">${esc(first)}</span>
       <span class="poster-title">${esc(m.title)}</span>
@@ -105,7 +107,8 @@ function renderDetail(id){
   const m=MOVIES.find(x=>x.id===id);if(!m)return;
   const watched=isWatched(m);
   $("#detail-content").innerHTML=`
-    <div class="detail-hero poster-${Math.abs([...m.id].reduce((a,c)=>a+c.charCodeAt(0),0))%6}">
+    <div class="detail-hero poster-${Math.abs([...m.id].reduce((a,c)=>a+c.charCodeAt(0),0))%6} ${m.posterPath?"has-real-poster":""}">
+      ${m.posterPath?`<img class="detail-poster-image" src="https://image.tmdb.org/t/p/w780${esc(m.posterPath)}" alt="${esc(m.title)} official movie poster">`:""}
       <button class="detail-close" data-action="close-detail" aria-label="Close details">×</button>
       <span class="detail-eyebrow">CINEMA CLUB · #${String(m.position).padStart(3,"0")}</span>
       <div class="detail-title-wrap"><div class="detail-monogram">${esc((m.title||"?").split(/[\s:—-]+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase())}</div><h2>${esc(m.title)}</h2></div>
@@ -126,8 +129,18 @@ function toast(msg){
   clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.remove("show"),1900);
 }
 function fillOptions(){
-  $("#genre-filter").innerHTML='<option value="">All genres</option>'+genres.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join("");
-  $("#year-filter").innerHTML='<option value="">Any year</option>'+years.map(y=>`<option value="${esc(y)}">${esc(y)}</option>`).join("");
+  // Derive options from the complete movie data at startup so the controls never stay empty.
+  const availableGenres = [...new Set(MOVIES.flatMap(m => (m.genres || "").split(",").map(g => g.trim()).filter(Boolean)))].sort((a,b)=>a.localeCompare(b));
+  const availableYears = [...new Set(MOVIES.map(m => String(m.year || "").trim()).filter(y => /^\d{4}$/.test(y)))].sort((a,b)=>Number(b)-Number(a));
+  const genreSelect = $("#genre-filter");
+  const yearSelect = $("#year-filter");
+  genreSelect.innerHTML = '<option value="">All genres</option>' + availableGenres.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join("");
+  yearSelect.innerHTML = '<option value="">Any year</option>' + availableYears.map(y=>`<option value="${esc(y)}">${esc(y)}</option>`).join("");
+  $("#genre-filter-hint").textContent = `${availableGenres.length} genres available across your movies.`;
+  $("#year-filter-hint").textContent = `${availableYears.length} release years available; movies without a year are listed as Year TBA.`;
+  // Restore selected filters if the browser retained the page state.
+  genreSelect.value = availableGenres.includes(state.genre) ? state.genre : "";
+  yearSelect.value = availableYears.includes(state.year) ? state.year : "";
 }
 function exportBackup(){
   const payload={format:"cinema-watchlist-backup-v1",watched:[...state.watched],exportedAt:new Date().toISOString()};
@@ -170,5 +183,71 @@ $("#import-progress").addEventListener("click",()=>$("#import-file").click());
 $("#import-file").addEventListener("change",e=>{importBackup(e.target.files[0]);e.target.value="";});
 $("#detail-modal").addEventListener("click",e=>{if(e.target===$("#detail-modal"))$("#detail-modal").close();});
 $("#filter-sheet").addEventListener("click",e=>{if(e.target===$("#filter-sheet"))closeFilters();});
+
+const TMDB_KEY_STORAGE = "cinema-club-tmdb-key-v1";
+const POSTER_STORAGE = "cinema-club-tmdb-posters-v1";
+let posterPaths = {};
+function loadPosterCache(){
+  try { posterPaths = JSON.parse(localStorage.getItem(POSTER_STORAGE) || "{}"); } catch(e) { posterPaths = {}; }
+  MOVIES.forEach(m => { if(posterPaths[m.id]) m.posterPath = posterPaths[m.id]; });
+}
+function savePosterCache(){
+  try { localStorage.setItem(POSTER_STORAGE, JSON.stringify(posterPaths)); } catch(e) {}
+}
+function openTmdbSettings(){
+  const dlg=$("#tmdb-modal");
+  $("#tmdb-key-input").value=localStorage.getItem(TMDB_KEY_STORAGE)||"";
+  $("#tmdb-status").textContent=Object.keys(posterPaths).length
+    ? `${Object.keys(posterPaths).length} movie posters matched on this device.`
+    : "No posters matched yet. Enter your TMDB API key to start.";
+  dlg.showModal();
+}
+async function syncTmdbPosters(){
+  const key=$("#tmdb-key-input").value.trim();
+  if(!key){$("#tmdb-status").textContent="Paste your TMDB API Key (not the Read Access Token) first.";return;}
+  localStorage.setItem(TMDB_KEY_STORAGE,key);
+  const btn=$("#tmdb-sync-button"); btn.disabled=true;
+  let matched=0, failed=0;
+  try{
+    for(let i=0;i<MOVIES.length;i++){
+      const m=MOVIES[i];
+      $("#tmdb-status").textContent=`Matching movie ${i+1} of ${MOVIES.length}: ${m.title}`;
+      if(posterPaths[m.id]){m.posterPath=posterPaths[m.id];matched++;continue;}
+      try{
+        const url=`https://api.themoviedb.org/3/find/${encodeURIComponent(m.id)}?api_key=${encodeURIComponent(key)}&external_source=imdb_id`;
+        const response=await fetch(url);
+        if(response.status===401){throw new Error("TMDB rejected the API key. Double-check that you used API Key, not API Read Access Token.");}
+        if(!response.ok){failed++;continue;}
+        const data=await response.json();
+        const found=(data.movie_results||[]).find(x=>x.poster_path);
+        if(found){posterPaths[m.id]=found.poster_path;m.posterPath=found.poster_path;matched++;}
+        else { failed++; }
+      }catch(err){
+        if(err.message && err.message.includes("rejected")) throw err;
+        failed++;
+      }
+      if(i%5===0){savePosterCache();render();}
+      await new Promise(resolve=>setTimeout(resolve,260));
+    }
+    savePosterCache();render();
+    $("#tmdb-status").textContent=`Finished! Matched ${matched} posters; ${failed} films had no match or poster. Your key is saved only in this browser, not in the public app files.`;
+    toast(`Loaded ${matched} movie posters`);
+  }catch(err){
+    $("#tmdb-status").textContent=err.message||"Could not connect to TMDB. Check the key and try again.";
+  }finally{btn.disabled=false;}
+}
+function clearTmdbKey(){
+  localStorage.removeItem(TMDB_KEY_STORAGE);
+  $("#tmdb-key-input").value="";
+  $("#tmdb-status").textContent="The saved key was removed from this browser. Already matched posters remain cached.";
+}
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[data-action]");if(!el)return;
+  if(el.dataset.action==="tmdb-settings")openTmdbSettings();
+  if(el.dataset.action==="tmdb-close")$("#tmdb-modal").close();
+  if(el.dataset.action==="tmdb-sync")syncTmdbPosters();
+  if(el.dataset.action==="tmdb-clear-key")clearTmdbKey();
+});
+loadPosterCache();
 loadSaved();fillOptions();render();
 if("serviceWorker" in navigator && location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}

@@ -35,3 +35,24 @@ Upload/replace the files in the repository. Refresh the site after GitHub Pages 
 
 ## Quick local preview
 You can preview it on a computer using a local web server, but opening the HTML file directly may not enable the install/offline features.
+
+
+## Loading real TMDB posters
+
+After uploading these updated files to the existing GitHub repository and waiting for Pages to publish:
+
+1. Open `https://xgxstx14.github.io/cinema-club/`.
+2. Click the small poster/settings icon near the top-right.
+3. Paste your TMDB **API Key** (the shorter key, not the API Read Access Token).
+4. Click **Load posters** and keep the page open while the 114 IMDb IDs are checked.
+5. The matched poster paths are saved locally in that browser. Movies without a TMDB match or poster will keep the Cinema Club typographic fallback.
+
+The API key is saved in that browser's local storage and is not included in the repository files. However, because this is a client-side public website, the key is used in browser API requests and should not be considered secret. For a personal project this may be acceptable; do not use a credential that must remain confidential. If you open the app on another device/browser, configure the key there too. Your watched state remains separate per device/browser unless you export/import your backup.
+
+TMDB attribution: This product uses the TMDB API but is not endorsed or certified by TMDB. Movie data and poster images are provided by TMDB.
+
+
+## Updates in this build
+- Genre and release-year filter menus are populated directly from the full movie data and show how many options are available.
+- Added an **Oldest year** sort option (ascending release year; films without a year appear last).
+- Updated the service-worker cache version so installed copies refresh to the new files.

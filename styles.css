@@ -20,3 +20,22 @@ dialog{color:var(--text);padding:0;border:1px solid #45434a;background:#17181d;b
 @media(min-width:900px){.movie-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:28px 20px}.welcome{padding-top:58px}.welcome h1{font-size:72px}.progress-panel{max-width:700px}.poster{aspect-ratio:2/2.8}.topbar{height:72px}}
 @media(max-width:360px){main{padding:0 14px}.topbar{padding:0 14px}.movie-grid{gap:17px 9px}.poster{padding:9px}.poster-top{font-size:6px}.title-button{font-size:11px}.watch-toggle{font-size:9px}.more-button{width:29px}.stat-pair{gap:12px}.progress-panel{padding:14px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+
+/* TMDB poster images and poster setup */
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.poster.has-real-poster{background:#17181b;overflow:hidden;padding:0}
+.poster-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.poster.has-real-poster .poster-top{z-index:2;position:absolute;top:0;left:0;right:0;padding:10px;background:linear-gradient(180deg,rgba(0,0,0,.72),transparent);color:#fff}
+.poster.has-real-poster .poster-mark,.poster.has-real-poster .poster-title,.poster.has-real-poster .poster-year{display:none}
+.detail-hero.has-real-poster{background:#17181b;overflow:hidden}
+.detail-poster-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 35%;opacity:.72}
+.detail-hero.has-real-poster:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(16,17,20,.98),rgba(16,17,20,.05) 85%);pointer-events:none}
+.detail-hero.has-real-poster .detail-close,.detail-hero.has-real-poster .detail-eyebrow,.detail-hero.has-real-poster .detail-title-wrap{z-index:2;position:relative}
+.tmdb-modal{max-width:560px}
+.tmdb-settings-content{padding:24px}
+.tmdb-settings-content>p{line-height:1.55;color:var(--muted)}
+.tmdb-settings-content .tmdb-privacy,.tmdb-settings-content .tmdb-attribution{font-size:.78rem}
+.tmdb-settings-content .tmdb-status{padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.035);font-size:.9rem}
+#tmdb-key-input{display:block;width:100%;margin-top:8px;padding:13px 14px;background:#191a1e;border:1px solid var(--line);border-radius:10px;color:var(--text);font:inherit}
+#tmdb-sync-button:disabled{opacity:.6;cursor:wait}
