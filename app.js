@@ -168,6 +168,7 @@ document.addEventListener("click",e=>{
   if(action==="close-filters")closeFilters();
   if(action==="reset-filters")resetFilters();
   if(action==="export")exportBackup();
+  if(action==="tmdb-settings")openTmdbSettings();
   if(action==="import")$("#import-file").click();
 });
 $("#search-input").addEventListener("input",e=>{state.query=e.target.value;render();});
