@@ -2,15 +2,16 @@
 
 This build keeps the Cinema Club design and adds a TMDB-powered home screen:
 1. What's Trending (Today / This week)
-2. What's Popular (All popular / 2026 only)
-3. The 2026 U.S. movie catalog with search, genre, year, release-type filters, sorting, details, watched status, and watchlist controls.
+2. What's Popular with Popular, Streaming, On TV, For Rent, and In Theaters categories (plus All popular / 2026 only scope)
+3. A Movie Trailers carousel with Popular and In Theaters options
+4. The 2026 U.S. movie catalog with search, genre, year, release-type filters, sorting, details, watched status, and watchlist controls.
 
 ## TMDB setup
 1. Publish the seven files in this ZIP to the root of your `main` branch on GitHub.
 2. Open Cinema Club and tap the striped-square settings button.
 3. Enter your TMDB API key (the short API key, not the long API Read Access Token) and save it.
 4. Use **Load 2026 catalog and movie posters** to fetch the catalog. The catalog can take a little while because TMDB's release categories are queried separately.
-5. If a TMDB key is already saved in this browser, the app loads cached data first and refreshes stale data on startup. The app caches the catalog and discovery rails locally and refreshes them about once every 24 hours when online. Use **Refresh catalog** to request a manual refresh.
+5. If a TMDB key is already saved in this browser, the app loads cached data first and refreshes stale data on startup. The app caches the catalog, discovery categories, and trailer rail locally and refreshes them about once every 24 hours when online. Streaming and rental filters use TMDB U.S. watch-provider availability where TMDB has data; On TV displays popular TV shows, and In Theaters uses TMDB’s now-playing list. Trailer links open YouTube in a new tab when TMDB has a YouTube trailer available. Use **Refresh catalog** to request a manual refresh.
 
 TMDB API calls are made from the browser, so the API key is not secret from someone who can inspect requests on that device. It is not written into these public files or included in backups.
 
