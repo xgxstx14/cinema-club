@@ -1,4 +1,112 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111217"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><title>Cinema Club</title><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"></head><body><header class="topbar"><a class="brand" href="./"><span class="brand-mark">CC</span><span><b>Cinema Club</b><small>Your personal movie tracker</small></span></a><div class="topbar-actions"><button class="icon-button" data-action="tmdb-settings" aria-label="Set up movie posters" title="Set up movie posters">▧</button><button class="icon-button" data-action="export" aria-label="Export backup" title="Export backup">↥</button><button class="icon-button" data-action="import" aria-label="Import backup" title="Import backup">↧</button><input id="import-file" type="file" accept="application/json,.json" hidden></div></header><main><section class="hero"><p class="eyebrow">YOUR PRIVATE COLLECTION</p><h1>Find your next film.</h1><p class="intro">Discover what's trending, explore popular movies, and build your watchlist.</p></section>
-<section class="discovery-section"><div class="section-heading"><div><p class="eyebrow">WHAT PEOPLE ARE WATCHING</p><h2>What's Trending</h2><p id="trending-meta" class="section-note">Trending this week</p></div><label class="rail-select"><span class="sr-only">Trending timeframe</span><select id="trend-window"><option value="week" selected>This week</option><option value="day">Today</option></select></label></div><div id="trending-rail" class="movie-rail"></div></section>
-<section class="discovery-section"><div class="section-heading"><div><p class="eyebrow">FAN FAVORITES</p><h2>What's Popular</h2><p id="popular-meta" class="section-note">Popular movies</p></div><label class="rail-select"><span class="sr-only">Popular movies range</span><select id="popular-scope"><option value="all" selected>All popular</option><option value="2026">2026 only</option></select></label></div><nav class="discovery-tabs" aria-label="Popular categories"><button class="discovery-tab active" data-popular-category="popular">Popular</button><button class="discovery-tab" data-popular-category="streaming">Streaming</button><button class="discovery-tab" data-popular-category="tv">On TV</button><button class="discovery-tab" data-popular-category="rent">For Rent</button><button class="discovery-tab" data-popular-category="theaters">In Theaters</button></nav><div id="popular-rail" class="movie-rail"></div><section class="trailer-section"><div class="section-heading"><div><p class="eyebrow">WATCH A PREVIEW</p><h2>Movie Trailers</h2><p id="trailer-meta" class="section-note">Popular movie trailers</p></div><label class="rail-select"><span class="sr-only">Trailer category</span><select id="trailer-scope"><option value="popular" selected>Popular</option><option value="theaters">In Theaters</option></select></label></div><div id="trailer-rail" class="movie-rail"></div></section><p id="discovery-status" class="section-note">Add your TMDB API key to load live discovery.</p></section>
-<section class="catalog-section"><div class="section-heading catalog-heading"><div><p class="eyebrow">YOUR MOVIE CATALOG</p><h2>2026 Movie List</h2><p id="catalog-status" class="section-note">Connect TMDB in settings to load the full U.S. release catalog.</p></div><button id="refresh-catalog" class="secondary" data-action="refresh-catalog">Refresh catalog</button></div><section class="stats"><div class="stat"><span>Films watched</span><strong id="watchedCount">0</strong></div></section><nav class="tabs"><button class="tab active" data-view="all">All films</button><button class="tab" data-view="watchlist">Watchlist</button><button class="tab" data-view="watched">Watched</button></nav><section class="filters"><label class="search-wrap"><span>Search</span><input id="search" type="search" placeholder="Title, genre, director…"></label><label><span>Genre</span><select id="genre"><option value="">All genres</option></select></label><label><span>Release year</span><select id="year"><option value="">All years</option></select></label><label><span>Release type</span><select id="release-type"><option value="">All release types</option><option value="theatrical">Theatrical (all)</option><option value="wide">Wide theatrical</option><option value="limited">Limited theatrical</option><option value="event">Event / re-release</option><option value="digital">Digital / streaming</option><option value="physical">Physical release</option><option value="premiere">Premiere</option><option value="tv">TV</option><option value="other">Other / unclassified</option></select></label><label><span>Sort by</span><select id="sort"><option value="date">Release date (earliest)</option><option value="newest">Release date (latest)</option><option value="title">Title A–Z</option><option value="oldest">Oldest year</option><option value="rating">TMDB rating</option><option value="popularity">Popularity (TMDB)</option></select></label></section><p class="results" id="results" aria-live="polite"></p><section id="grid" class="grid"></section><p id="empty" class="empty" hidden>No films match these filters.</p></section><footer><p>Use ↥ to download a backup and ↧ to restore one. Backups include watched status and settings.</p><p id="save-status" role="status">Changes save on this device.</p></footer></main><dialog id="tmdb-modal" class="modal"><div class="modal-head"><div><p class="eyebrow">PERSONALIZE YOUR COLLECTION</p><h2>Movie posters</h2></div><button class="close" data-action="close-tmdb" aria-label="Close">×</button></div><div class="modal-content"><p>Enter your TMDB API key to load live 2026 U.S. releases, Trending, Popular, and posters. The key is saved only in this browser on this device.</p><label class="field-label" for="tmdb-key-input">TMDB API key</label><input id="tmdb-key-input" type="password" autocomplete="off" placeholder="Paste your API key here"><div class="modal-actions"><button class="secondary" data-action="clear-tmdb">Clear key</button><button class="primary" data-action="save-tmdb">Save key</button></div><p id="tmdb-status" class="status" aria-live="polite">No posters matched yet.</p><button class="primary full" data-action="refresh-catalog">Load 2026 catalog and movie posters</button><p class="fineprint">Your key is not included in public app files or backups. Browser requests can be inspected by someone with access to this device.</p></div></dialog><dialog id="detail-modal" class="modal detail-modal"><div id="detail-content"></div><div class="modal-actions"><button class="secondary" data-action="close-detail">Close</button></div></dialog><div id="toast" class="toast" role="status" aria-live="polite"></div><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080d1c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Cinema Club">
+  <link rel="apple-touch-icon" href="icon.png">
+  <title>Cinema Club</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar" aria-label="Main navigation">
+    <a class="sidebar-brand" href="#home" aria-label="Home"><img src="icon.png" alt="Cinema Club emblem"></a>
+    <nav class="side-nav">
+      <a class="side-link active" href="#home"><span class="nav-symbol">⌂</span>Home</a>
+      <a class="side-link" href="#trending"><span class="nav-symbol">↗</span>Trending</a>
+      <a class="side-link" href="#popular"><span class="nav-symbol">★</span>Popular</a>
+      <a class="side-link" href="#trailers"><span class="nav-symbol">▶</span>Trailers</a>
+      <a class="side-link" href="#catalog"><span class="nav-symbol">▦</span>2026 Movie List</a>
+      <div class="side-divider"></div>
+      <button class="side-link" data-view="watchlist"><span class="nav-symbol">✦</span>Watchlist</button>
+      <button class="side-link" data-view="watched"><span class="nav-symbol">✓</span>Watched <span class="nav-count" id="sideWatchedCount">0</span></button>
+      <div class="side-divider"></div>
+      <button class="side-link" data-action="tmdb-settings"><span class="nav-symbol">⚙</span>Settings</button>
+      <button class="side-link" data-action="tmdb-settings"><span class="nav-symbol">◉</span>TMDB Settings</button>
+    </nav>
+    <div class="sidebar-tagline"><img src="icon.png" alt=""><p>Good movies.<br>Better company.</p></div>
+  </aside>
+
+  <div class="app-content">
+    <header class="topbar">
+      <a class="mobile-brand" href="#home" aria-label="Home"><img src="icon.png" alt="Cinema Club emblem"></a>
+      <div class="topbar-actions">
+        <button class="icon-button" data-action="tmdb-settings" aria-label="TMDB settings" title="TMDB settings">⚙</button>
+        <button class="icon-button" data-action="export" aria-label="Export backup" title="Export backup">↥</button>
+        <button class="icon-button" data-action="import" aria-label="Import backup" title="Import backup">↧</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="home">
+        <div class="hero-copy">
+          <p class="eyebrow">YOUR NEXT MOVIE NIGHT STARTS HERE</p>
+          <h1>Discover<br>Your Next<br>Favorite Movie</h1>
+          <p class="intro">The latest releases, trending hits, and timeless classics.<br class="desktop-break"> All in one place.</p>
+          <label class="hero-search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search for movies…" aria-label="Search movies"><span class="search-accent">⌕</span></label>
+        </div>
+        <img class="hero-emblem" src="icon.png" alt="">
+      </section>
+
+      <section class="discovery-section" id="trending">
+        <div class="section-heading">
+          <div><h2><span class="heading-symbol">↗</span>What's Trending</h2><p id="trending-meta" class="section-note">Trending this week</p></div>
+          <div class="segmented" role="group" aria-label="Trending timeframe"><button data-trend-window="day">Today</button><button class="active" data-trend-window="week">This Week</button></div>
+        </div>
+        <div id="trending-rail" class="movie-rail"></div>
+      </section>
+
+      <section class="discovery-section" id="popular">
+        <div class="section-heading">
+          <div><h2><span class="heading-symbol">★</span>What's Popular</h2><p id="popular-meta" class="section-note">Popular movies</p></div>
+          <label class="rail-select"><span class="sr-only">Popular movies range</span><select id="popular-scope"><option value="all" selected>All popular</option><option value="2026">2026 only</option></select></label>
+        </div>
+        <nav class="discovery-tabs" aria-label="Popular categories">
+          <button class="discovery-tab active" data-popular-category="popular">Popular</button>
+          <button class="discovery-tab" data-popular-category="streaming">Streaming</button>
+          <button class="discovery-tab" data-popular-category="tv">On TV</button>
+          <button class="discovery-tab" data-popular-category="rent">For Rent</button>
+          <button class="discovery-tab" data-popular-category="theaters">In Theaters</button>
+        </nav>
+        <div id="popular-rail" class="movie-rail"></div>
+      </section>
+
+      <section class="discovery-section trailer-section" id="trailers">
+        <div class="section-heading"><div><h2><span class="heading-symbol">▶</span>Movie Trailers</h2><p id="trailer-meta" class="section-note">Popular movie trailers</p></div>
+          <label class="rail-select"><span class="sr-only">Trailer category</span><select id="trailer-scope"><option value="popular" selected>Popular</option><option value="theaters">In Theaters</option></select></label>
+        </div>
+        <div id="trailer-rail" class="movie-rail"></div>
+        <p id="discovery-status" class="section-note">Add your TMDB API key in settings to load live discovery.</p>
+      </section>
+
+      <section class="catalog-section" id="catalog">
+        <div class="section-heading catalog-heading"><div><p class="eyebrow">THE FULL RELEASE CALENDAR</p><h2>2026 Movie List</h2><p id="catalog-status" class="section-note">Connect TMDB in settings to load the full U.S. release catalog.</p></div><button id="refresh-catalog" class="secondary" data-action="refresh-catalog">Refresh catalog</button></div>
+        <section class="stats"><div class="stat"><span>Films watched</span><strong id="watchedCount">0</strong></div></section>
+        <nav class="tabs catalog-tabs" aria-label="Movie list views"><button class="tab active" data-view="all">All films</button><button class="tab" data-view="watchlist">Watchlist</button><button class="tab" data-view="watched">Watched</button></nav>
+        <section class="filters" aria-label="Movie filters">
+          <label><span>Genre</span><select id="genre"><option value="">All genres</option></select></label>
+          <label><span>Release year</span><select id="year"><option value="">All years</option></select></label>
+          <label><span>Release type</span><select id="release-type"><option value="">All release types</option><option value="theatrical">Theatrical (all)</option><option value="wide">Wide theatrical</option><option value="limited">Limited theatrical</option><option value="event">Event / re-release</option><option value="digital">Digital / streaming</option><option value="physical">Physical release</option><option value="premiere">Premiere</option><option value="tv">TV</option><option value="other">Other / unclassified</option></select></label>
+          <label><span>Sort by</span><select id="sort"><option value="date">Release date (earliest)</option><option value="newest">Release date (latest)</option><option value="title">Title A–Z</option><option value="oldest">Oldest year</option><option value="rating">TMDB rating</option><option value="popularity">Popularity (TMDB)</option></select></label>
+        </section>
+        <p class="results" id="results" aria-live="polite"></p><section id="grid" class="grid"></section><p id="empty" class="empty" hidden>No films match these filters.</p>
+      </section>
+      <footer><p>Use the backup controls to save or restore your Cinema Club progress.</p><p id="save-status" role="status">Changes save on this device.</p></footer>
+    </main>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Quick navigation">
+    <a class="mobile-nav-link active" href="#home"><span>⌂</span>Home</a><a class="mobile-nav-link" href="#trending"><span>↗</span>Trending</a><a class="mobile-nav-link" href="#popular"><span>★</span>Popular</a><a class="mobile-nav-link" href="#trailers"><span>▶</span>Trailers</a><button class="mobile-nav-link" data-action="mobile-more"><span>•••</span>More</button>
+  </nav>
+
+  <dialog id="tmdb-modal" class="modal"><div class="modal-head"><div><p class="eyebrow">PERSONALIZE YOUR COLLECTION</p><h2>Movie posters</h2></div><button class="close" data-action="close-tmdb" aria-label="Close">×</button></div><div class="modal-content"><p>Enter your TMDB API key to load live 2026 U.S. releases, Trending, Popular, and posters. The key is saved only in this browser on this device.</p><label class="field-label" for="tmdb-key-input">TMDB API key</label><input id="tmdb-key-input" type="password" autocomplete="off" placeholder="Paste your API key here"><div class="modal-actions"><button class="secondary" data-action="clear-tmdb">Clear key</button><button class="primary" data-action="save-tmdb">Save key</button></div><p id="tmdb-status" class="status" aria-live="polite">No posters matched yet.</p><button class="primary full" data-action="refresh-catalog">Load 2026 catalog and movie posters</button><p class="fineprint">Your key is not included in public app files or backups. Browser requests can be inspected by someone with access to this device.</p></div></dialog>
+  <dialog id="detail-modal" class="modal detail-modal"><div id="detail-content"></div><div class="modal-actions"><button class="secondary" data-action="close-detail">Close</button></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

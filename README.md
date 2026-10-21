@@ -1,22 +1,24 @@
-# Cinema Club — TMDB-powered 2026 catalog
+# Cinema Club
 
-This build keeps the Cinema Club design and adds a TMDB-powered home screen:
-1. What's Trending (Today / This week)
-2. What's Popular with Popular, Streaming, On TV, For Rent, and In Theaters categories (plus All popular / 2026 only scope)
-3. A Movie Trailers carousel with Popular and In Theaters options
-4. The 2026 U.S. movie catalog with search, genre, year, release-type filters, sorting, details, watched status, and watchlist controls.
+Cinema Club is a static, iPhone-friendly movie discovery and watchlist app powered by TMDB.
 
-## TMDB setup
-1. Publish the seven files in this ZIP to the root of your `main` branch on GitHub.
-2. Open Cinema Club and tap the striped-square settings button.
-3. Enter your TMDB API key (the short API key, not the long API Read Access Token) and save it.
-4. Use **Load 2026 catalog and movie posters** to fetch the catalog. The catalog can take a little while because TMDB's release categories are queried separately.
-5. If a TMDB key is already saved in this browser, the app loads cached data first and refreshes stale data on startup. The app caches the catalog, discovery categories, and trailer rail locally and refreshes them about once every 24 hours when online. Streaming and rental filters use TMDB U.S. watch-provider availability where TMDB has data; On TV displays popular TV shows, and In Theaters uses TMDB’s now-playing list. Trailer links open YouTube in a new tab when TMDB has a YouTube trailer available. Use **Refresh catalog** to request a manual refresh.
+## Features
+- Trending movies with Today and This Week options
+- Popular, Streaming, On TV, For Rent, and In Theaters categories
+- Movie trailer carousel with Popular and In Theaters options
+- 2026 U.S. movie catalog with search, filters, sorting, and TMDB posters
+- Movie details, watchlist, watched tracking, and JSON backup/import
+- Responsive desktop sidebar and mobile bottom navigation
+- Gold embossed emblem, deep navy/purple surfaces, and coral-orange accents
 
-TMDB API calls are made from the browser, so the API key is not secret from someone who can inspect requests on that device. It is not written into these public files or included in backups.
+## Publish on GitHub Pages
+1. Download and extract the update ZIP.
+2. In your existing `xgxstx14/cinema-club` repository, replace the files in the repository root with the files from this ZIP.
+3. Commit the changes to `main` and wait for GitHub Pages to finish publishing.
+4. Open the website and refresh. If an older version remains, wait briefly and refresh again; the service-worker cache version was bumped for this release.
 
-## Catalog coverage note
-TMDB is the discovery source, not a guarantee that every U.S. release is listed. Dates, release categories, genres, and synopsis availability depend on TMDB's data. The app paginates through the TMDB results for each release category, up to TMDB’s 500-page API limit per category. Categories can overlap; duplicate movie IDs are merged. The existing spreadsheet list remains as a fallback if TMDB has not been configured.
+## TMDB key and saved progress
+Your TMDB API key remains in browser local storage and is not included in these public files. The app keeps the same site origin and local storage keys, so existing watchlist and watched progress should remain on the same browser/device. Export a backup before replacing files as a precaution.
 
-## Watchlist and backups
-Use **＋ Watchlist** on a carousel card, catalog card, or movie detail screen. Watchlist membership is separate from watched status and persists on this device. Export a JSON backup regularly; browser storage can be cleared by the browser or device.
+## Notes
+This is a client-side static site. TMDB data, provider availability, and trailers depend on what TMDB currently returns for the United States. The Streaming and For Rent categories are based on TMDB watch-provider discovery data.
