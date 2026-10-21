@@ -1,14 +1,21 @@
-# Cinema Club — spreadsheet movie list
+# Cinema Club — TMDB-powered 2026 catalog
 
-This build uses the 158 movie entries from `2026_US_Movie_Release_Master_List_synopses_updated(1).xlsx` and keeps the existing Cinema Club interface and features. Movie titles, release dates, genres, synopses when supplied, release types, distributors, and synopsis/date status notes were carried over where available.
+This build keeps the Cinema Club design and adds a TMDB-powered home screen:
+1. What's Trending (Today / This week)
+2. What's Popular (All popular / 2026 only)
+3. The 2026 U.S. movie catalog with search, genre, year, release-type filters, sorting, details, watched status, and watchlist controls.
 
-Watched progress starts at zero, as requested. Movies without a synopsis are explicitly marked as needing research. Release dates and genre labels are taken from the spreadsheet and may need cross-checking where the source status says so.
+## TMDB setup
+1. Publish the seven files in this ZIP to the root of your `main` branch on GitHub.
+2. Open Cinema Club and tap the striped-square settings button.
+3. Enter your TMDB API key (the short API key, not the long API Read Access Token) and save it.
+4. Use **Load 2026 catalog and movie posters** to fetch the catalog. The catalog can take a little while because TMDB's release categories are queried separately.
+5. If a TMDB key is already saved in this browser, the app loads cached data first and refreshes stale data on startup. The app caches the catalog and discovery rails locally and refreshes them about once every 24 hours when online. Use **Refresh catalog** to request a manual refresh.
 
-## Upload
-Extract this ZIP and upload/replace the seven files at the root of your GitHub repository: `index.html`, `styles.css`, `app.js`, `manifest.webmanifest`, `sw.js`, `icon.svg`, and `README.md`. Commit to `main`, wait for GitHub Pages to publish, then test the live site.
+TMDB API calls are made from the browser, so the API key is not secret from someone who can inspect requests on that device. It is not written into these public files or included in backups.
 
-## Backups
-The export button downloads a JSON backup; the import button restores a backup and asks before replacing current data. Keep a copy somewhere outside the app. Browser storage can be erased, so back up regularly.
+## Catalog coverage note
+TMDB is the discovery source, not a guarantee that every U.S. release is listed. Dates, release categories, genres, and synopsis availability depend on TMDB's data. The app paginates through the TMDB results for each release category, up to TMDB’s 500-page API limit per category. Categories can overlap; duplicate movie IDs are merged. The existing spreadsheet list remains as a fallback if TMDB has not been configured.
 
-## TMDB
-The striped-square button opens poster settings. The API key is stored locally in this browser, not in the public files or backup. Poster matching now searches TMDB by movie title and year because this spreadsheet does not contain IMDb IDs. Check the results visually; title-based matches may occasionally need correction. Do not commit your key to GitHub.
+## Watchlist and backups
+Use **＋ Watchlist** on a carousel card, catalog card, or movie detail screen. Watchlist membership is separate from watched status and persists on this device. Export a JSON backup regularly; browser storage can be cleared by the browser or device.
