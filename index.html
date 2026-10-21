@@ -25,23 +25,12 @@
       <button class="side-link" data-view="watchlist"><span class="nav-symbol">✦</span>Watchlist</button>
       <button class="side-link" data-view="watched"><span class="nav-symbol">✓</span>Watched <span class="nav-count" id="sideWatchedCount">0</span></button>
       <div class="side-divider"></div>
-      <button class="side-link" data-action="tmdb-settings"><span class="nav-symbol">⚙</span>Settings</button>
-      <button class="side-link" data-action="tmdb-settings"><span class="nav-symbol">◉</span>TMDB Settings</button>
+      <button class="side-link" data-action="tmdb-settings"><span class="nav-symbol">⚙</span>Settings &amp; Backup</button>
     </nav>
     <div class="sidebar-tagline"><img src="icon.png" alt=""><p>Good movies.<br>Better company.</p></div>
   </aside>
 
   <div class="app-content">
-    <header class="topbar">
-      <a class="mobile-brand" href="#home" aria-label="Home"><img src="icon.png" alt="Cinema Club emblem"></a>
-      <div class="topbar-actions">
-        <button class="icon-button" data-action="tmdb-settings" aria-label="TMDB settings" title="TMDB settings">⚙</button>
-        <button class="icon-button" data-action="export" aria-label="Export backup" title="Export backup">↥</button>
-        <button class="icon-button" data-action="import" aria-label="Import backup" title="Import backup">↧</button>
-        <input id="import-file" type="file" accept="application/json,.json" hidden>
-      </div>
-    </header>
-
     <main>
       <section class="hero" id="home">
         <div class="hero-copy">
@@ -96,7 +85,7 @@
         </section>
         <p class="results" id="results" aria-live="polite"></p><section id="grid" class="grid"></section><p id="empty" class="empty" hidden>No films match these filters.</p>
       </section>
-      <footer><p>Use the backup controls to save or restore your Cinema Club progress.</p><p id="save-status" role="status">Changes save on this device.</p></footer>
+      <footer><p>Use Settings &amp; Backup to manage your TMDB connection and save or restore your Cinema Club progress.</p><p id="save-status" role="status">Changes save on this device.</p></footer>
     </main>
   </div>
 
@@ -104,7 +93,7 @@
     <a class="mobile-nav-link active" href="#home"><span>⌂</span>Home</a><a class="mobile-nav-link" href="#trending"><span>↗</span>Trending</a><a class="mobile-nav-link" href="#popular"><span>★</span>Popular</a><a class="mobile-nav-link" href="#trailers"><span>▶</span>Trailers</a><button class="mobile-nav-link" data-action="mobile-more"><span>•••</span>More</button>
   </nav>
 
-  <dialog id="tmdb-modal" class="modal"><div class="modal-head"><div><p class="eyebrow">PERSONALIZE YOUR COLLECTION</p><h2>Movie posters</h2></div><button class="close" data-action="close-tmdb" aria-label="Close">×</button></div><div class="modal-content"><p>Enter your TMDB API key to load live 2026 U.S. releases, Trending, Popular, and posters. The key is saved only in this browser on this device.</p><label class="field-label" for="tmdb-key-input">TMDB API key</label><input id="tmdb-key-input" type="password" autocomplete="off" placeholder="Paste your API key here"><div class="modal-actions"><button class="secondary" data-action="clear-tmdb">Clear key</button><button class="primary" data-action="save-tmdb">Save key</button></div><p id="tmdb-status" class="status" aria-live="polite">No posters matched yet.</p><button class="primary full" data-action="refresh-catalog">Load 2026 catalog and movie posters</button><p class="fineprint">Your key is not included in public app files or backups. Browser requests can be inspected by someone with access to this device.</p></div></dialog>
+  <dialog id="tmdb-modal" class="modal settings-modal"><div class="modal-head"><div><p class="eyebrow">YOUR CINEMA CLUB CONTROL CENTER</p><h2>Settings &amp; Backup</h2></div><button class="close" data-action="close-tmdb" aria-label="Close">×</button></div><div class="modal-content"><section class="settings-block"><h3>TMDB connection</h3><p>Connect your TMDB API key to load live 2026 U.S. releases, Trending, Popular, trailers, and movie posters. Your key is saved only in this browser on this device.</p><label class="field-label" for="tmdb-key-input">TMDB API key</label><input id="tmdb-key-input" type="password" autocomplete="off" placeholder="Paste your API key here"><div class="modal-actions"><button class="secondary" data-action="clear-tmdb">Clear key</button><button class="primary" data-action="save-tmdb">Save key</button></div><p id="tmdb-status" class="status" aria-live="polite">No posters matched yet.</p><button class="secondary full" data-action="refresh-catalog">Refresh 2026 movie list</button><button class="secondary full settings-refresh" data-action="refresh-discovery">Refresh Trending, Popular &amp; Trailers</button><p class="fineprint">Your key is not included in public app files or backups. Browser requests can be inspected by someone with access to this device.</p></section><section class="settings-block"><h3>Backup &amp; restore</h3><p>Download a copy of your saved movie progress, or restore a backup file you saved earlier.</p><div class="backup-actions"><button class="primary" data-action="export">↥ Download backup</button><button class="secondary" data-action="import">↧ Upload / restore backup</button></div><input id="import-file" type="file" accept="application/json,.json" hidden><p class="fineprint">Your backup includes movie data, watchlist, watched status, filters, and poster metadata. Your TMDB API key is never included.</p></section></div></dialog>
   <dialog id="detail-modal" class="modal detail-modal"><div id="detail-content"></div><div class="modal-actions"><button class="secondary" data-action="close-detail">Close</button></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
